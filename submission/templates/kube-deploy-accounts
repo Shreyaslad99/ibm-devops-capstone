@@ -1,0 +1,7 @@
+PLACEHOLDER — paste actual command output from the configured Kubernetes environment, such as:
+kubectl get deployments
+kubectl get pods
+kubectl get replicasets
+kubectl get services
+
+Do not use fabricated output.
