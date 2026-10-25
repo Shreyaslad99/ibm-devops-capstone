@@ -1,0 +1,1 @@
+PLACEHOLDER — paste the full, real Tekton PipelineRun logs from the course environment. Do not submit this placeholder as evidence.
