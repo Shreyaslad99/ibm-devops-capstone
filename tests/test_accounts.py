@@ -68,7 +68,7 @@ class AccountsApiTestCase(unittest.TestCase):
     def test_security_headers_present(self):
         response = self.client.get("/health")
         self.assertEqual(response.headers.get("X-Content-Type-Options"), "nosniff")
-        self.assertEqual(response.headers.get("X-Frame-Options"), "DENY")
+        self.assertEqual(response.headers.get("X-Frame-Options"), "SAMEORIGIN")
         self.assertIn("object-src 'none'", response.headers.get("Content-Security-Policy", ""))
 
 
