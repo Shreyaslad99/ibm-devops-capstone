@@ -40,3 +40,40 @@ jobs:
         with:
           name: kube-images
           path: submission/generated/kube-images
+
+      - name: Create temporary Kubernetes cluster
+        uses: helm/kind-action@v1.12.0
+
+      - name: Load image and deploy Accounts service
+        run: |
+          kind load docker-image accounts:latest
+          kubectl apply -f k8s/deployment.yaml
+          kubectl rollout status deployment/accounts --timeout=120s
+          kubectl wait --for=condition=Ready pod -l app=accounts --timeout=120s
+
+      - name: Capture Kubernetes deployment details
+        shell: bash
+        run: |
+          mkdir -p submission/generated
+          {
+            echo "Kubernetes deployment evidence from GitHub-hosted kind cluster"
+            echo "Workflow run: https://github.com/Shreyaslad99/ibm-devops-capstone/actions"
+            echo
+            echo '$ kubectl get deployments -o wide'
+            kubectl get deployments -o wide
+            echo
+            echo '$ kubectl get pods -o wide'
+            kubectl get pods -o wide
+            echo
+            echo '$ kubectl get replicasets -o wide'
+            kubectl get replicasets -o wide
+            echo
+            echo '$ kubectl get services -o wide'
+            kubectl get services -o wide
+          } 2>&1 | tee submission/generated/kube-deploy-accounts
+
+      - name: Upload kube-deploy-accounts output
+        uses: actions/upload-artifact@v4
+        with:
+          name: kube-deploy-accounts
+          path: submission/generated/kube-deploy-accounts
