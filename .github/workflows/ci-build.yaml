@@ -24,3 +24,19 @@ jobs:
         run: flake8 service tests run.py
       - name: Run unit tests
         run: nosetests --with-coverage --cover-package=service
+
+      - name: Build Docker image
+        run: docker build -t accounts:latest .
+
+      - name: Capture Docker image details
+        shell: bash
+        run: |
+          mkdir -p submission/generated
+          docker images --format 'table {{.Repository}}\t{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}\t{{.Size}}' accounts:latest | tee submission/generated/kube-images
+          docker image inspect accounts:latest --format 'Created (UTC): {{.Created}} | Size (bytes): {{.Size}}' | tee -a submission/generated/kube-images
+
+      - name: Upload kube-images output
+        uses: actions/upload-artifact@v4
+        with:
+          name: kube-images
+          path: submission/generated/kube-images
